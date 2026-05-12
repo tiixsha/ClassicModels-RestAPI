@@ -35,6 +35,7 @@ class Employees(Base):
     jobTitle = Column(String(50), nullable=False)
 
     office = relationship("Offices", back_populates="employees")
+    customers = relationship("Customers", foreign_keys="Customers.salesRepEmployeeNumber", primaryjoin="Employees.employeeNumber == Customers.salesRepEmployeeNumber")
 
     def __repr__(self):
         return f"<Employees(employeeNumber={self.employeeNumber}, lastName='{self.lastName}')>"
@@ -88,8 +89,9 @@ class Customers(Base):
     state = Column(String(50), nullable=True)
     postalCode = Column(String(15), nullable=True)
     country = Column(String(50), nullable=False)
-    salesRepEmployeeNumber = Column(Integer, nullable=True, index=True)
+    salesRepEmployeeNumber = Column(Integer, ForeignKey('employees.employeeNumber'), nullable=True, index=True)
     creditLimit = Column(Numeric(10,2), nullable=True)
+    
 
     orders = relationship("Orders", back_populates="customer")
     payments = relationship("Payments", back_populates="customer")

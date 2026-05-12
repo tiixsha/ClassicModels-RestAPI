@@ -1,13 +1,9 @@
 
-
-
 from sqlalchemy.orm import Session
-import models, schemas
-import logging
+import models, schemas.customer_schemas as customer_schemas
+from logger import get_logger
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
-
+logger = get_logger(__name__)
 
 # ── Customers ──────────────────────────────────────────────
 def get_customers(db: Session, skip: int = 0, limit: int = 100):
@@ -35,7 +31,7 @@ def get_customer(db: Session, customer_number: int):
         raise
 
 
-def create_customer(db: Session, customer: schemas.CustomerCreate):
+def create_customer(db: Session, customer: customer_schemas.CustomerCreate):
     try:
         db_customer = models.Customers(**customer.model_dump())
         db.add(db_customer)
@@ -49,7 +45,7 @@ def create_customer(db: Session, customer: schemas.CustomerCreate):
         raise
 
 
-def update_customer(db: Session, customer_number: int, customer_update: schemas.CustomerUpdate):
+def update_customer(db: Session, customer_number: int, customer_update: customer_schemas.CustomerUpdate):
     try:
         update_data = customer_update.model_dump(exclude_unset=True)
         if not update_data:
@@ -116,7 +112,7 @@ def get_customer_payments(db: Session, customer_number: int):
 
 
 # ── Count Functions (async for concurrency) ────────────────
-S
+
 async def get_customers_count(db: Session) -> int:
     try:
         logger.info("Starting customers count query")

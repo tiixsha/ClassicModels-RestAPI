@@ -1,22 +1,20 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-import crud, schemas
+import crud.customer_crud as customer_crud, schemas.customer_schemas as customer_schemas
 from database import get_db
-import logging
+from logger import get_logger
 
 router = APIRouter(
     prefix="/customers",
     tags=["customers"]
 )
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
-
-@router.get("/", response_model=list[schemas.CustomerOut])
+@router.get("/", response_model=list[customer_schemas.CustomerOut])
 def read_customers(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     try:
-        customers = crud.get_customers(db, skip=skip, limit=limit)
+        customers = customer_crud.get_customers(db, skip=skip, limit=limit)
         logger.info(f"Retrieved {len(customers)} customers")
         return customers
     except Exception as e:
@@ -24,10 +22,10 @@ def read_customers(skip: int = 0, limit: int = 100, db: Session = Depends(get_db
         raise HTTPException(status_code=500, detail="Internal Server Error")
 
 
-@router.get("/{customer_number}", response_model=schemas.CustomerOut)
+@router.get("/{customer_number}", response_model=customer_schemas.CustomerOut)
 def read_customer(customer_number: int, db: Session = Depends(get_db)):
     try:
-        customer = crud.get_customer(db, customer_number=customer_number)
+        customer = customer_crud.get_customer(db, customer_number=customer_number)
         if customer is None:
             logger.warning(f"Customer with ID {customer_number} not found")
             raise HTTPException(status_code=404, detail="Customer not found")
@@ -40,10 +38,10 @@ def read_customer(customer_number: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=500, detail="Internal Server Error")
 
 
-@router.post("/", response_model=schemas.CustomerOut, status_code=201)
-def create_customer(customer: schemas.CustomerCreate, db: Session = Depends(get_db)):
+@router.post("/", response_model=customer_schemas.CustomerOut, status_code=201)
+def create_customer(customer: customer_schemas.CustomerCreate, db: Session = Depends(get_db)):
     try:
-        db_customer = crud.create_customer(db, customer=customer)
+        db_customer = customer_crud.create_customer(db, customer=customer)
         logger.info(f"Customer with ID {db_customer.customerNumber} created successfully")
         return db_customer
     except Exception as e:
@@ -51,10 +49,10 @@ def create_customer(customer: schemas.CustomerCreate, db: Session = Depends(get_
         raise HTTPException(status_code=500, detail="Internal Server Error")
 
 
-@router.put("/{customer_number}", response_model=schemas.CustomerOut)
-def update_customer(customer_number: int, customer_update: schemas.CustomerUpdate, db: Session = Depends(get_db)):
+@router.put("/{customer_number}", response_model=customer_schemas.CustomerOut)
+def update_customer(customer_number: int, customer_update: customer_schemas.CustomerUpdate, db: Session = Depends(get_db)):
     try:
-        db_customer = crud.update_customer(db, customer_number=customer_number, customer_update=customer_update)
+        db_customer = customer_crud.update_customer(db, customer_number=customer_number, customer_update=customer_update)
         if db_customer is None:
             logger.warning(f"Customer with ID {customer_number} not found for update")
             raise HTTPException(status_code=404, detail="Customer not found")
@@ -70,7 +68,7 @@ def update_customer(customer_number: int, customer_update: schemas.CustomerUpdat
 @router.delete("/{customer_number}", status_code=204)
 def delete_customer(customer_number: int, db: Session = Depends(get_db)):
     try:
-        success = crud.delete_customer(db, customer_number=customer_number)
+        success = customer_crud.delete_customer(db, customer_number=customer_number)
         if not success:
             logger.warning(f"Customer with ID {customer_number} not found for deletion")
             raise HTTPException(status_code=404, detail="Customer not found")
@@ -83,14 +81,14 @@ def delete_customer(customer_number: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=500, detail="Internal Server Error")
 
 
-@router.get("/{customer_number}/orders", response_model=list[schemas.OrderOut])
+@router.get("/{customer_number}/orders", response_model=list[customer_schemas.OrderOut])
 def read_customer_orders(customer_number: int, db: Session = Depends(get_db)):
     try:
-        customer = crud.get_customer(db, customer_number=customer_number)
+        customer = customer_crud.get_customer(db, customer_number=customer_number)
         if customer is None:
             logger.warning(f"Customer with ID {customer_number} not found")
             raise HTTPException(status_code=404, detail="Customer not found")
-        orders = crud.get_customer_orders(db, customer_number=customer_number)
+        orders = customer_crud.get_customer_orders(db, customer_number=customer_number)
         logger.info(f"Retrieved {len(orders)} orders for customer ID {customer_number}")
         return orders
     except HTTPException:
@@ -100,14 +98,14 @@ def read_customer_orders(customer_number: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=500, detail="Internal Server Error")
 
 
-@router.get("/{customer_number}/payments", response_model=list[schemas.PaymentOut])
+@router.get("/{customer_number}/payments", response_model=list[customer_schemas.PaymentOut])
 def read_customer_payments(customer_number: int, db: Session = Depends(get_db)):
     try:
-        customer = crud.get_customer(db, customer_number=customer_number)
+        customer = customer_crud.get_customer(db, customer_number=customer_number)
         if customer is None:
             logger.warning(f"Customer with ID {customer_number} not found")
             raise HTTPException(status_code=404, detail="Customer not found")
-        payments = crud.get_customer_payments(db, customer_number=customer_number)
+        payments = customer_crud.get_customer_payments(db, customer_number=customer_number)
         logger.info(f"Retrieved {len(payments)} payments for customer ID {customer_number}")
         return payments
     except HTTPException:

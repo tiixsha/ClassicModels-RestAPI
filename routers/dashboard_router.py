@@ -1,22 +1,21 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from database import get_db
-import crud
+import crud.customer_crud as customer_crud
 import asyncio
-import logging
+from logger import get_logger
 import time
 
 router = APIRouter(tags=["dashboard"])
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 
 @router.get("/customers/count")
 async def get_customers_count(db: Session = Depends(get_db)):
     try:
         logger.info("Incoming request: GET /customers/count")
-        count = await crud.get_customers_count(db)
+        count = await customer_crud.get_customers_count(db)
         logger.info(f"Response: customers count = {count}")
         return {"count": count}
     except Exception as e:
@@ -28,7 +27,7 @@ async def get_customers_count(db: Session = Depends(get_db)):
 async def get_orders_count(db: Session = Depends(get_db)):
     try:
         logger.info("Incoming request: GET /orders/count")
-        count = await crud.get_orders_count(db)
+        count = await customer_crud.get_orders_count(db)
         logger.info(f"Response: orders count = {count}")
         return {"count": count}
     except Exception as e:
@@ -40,7 +39,7 @@ async def get_orders_count(db: Session = Depends(get_db)):
 async def get_products_count(db: Session = Depends(get_db)):
     try:
         logger.info("Incoming request: GET /products/count")
-        count = await crud.get_products_count(db)
+        count = await customer_crud.get_products_count(db)
         logger.info(f"Response: products count = {count}")
         return {"count": count}
     except Exception as e:
@@ -52,7 +51,7 @@ async def get_products_count(db: Session = Depends(get_db)):
 async def get_employees_count(db: Session = Depends(get_db)):
     try:
         logger.info("Incoming request: GET /employees/count")
-        count = await crud.get_employees_count(db)
+        count = await customer_crud.get_employees_count(db)
         logger.info(f"Response: employees count = {count}")
         return {"count": count}
     except Exception as e:
@@ -64,7 +63,7 @@ async def get_employees_count(db: Session = Depends(get_db)):
 async def get_offices_count(db: Session = Depends(get_db)):
     try:
         logger.info("Incoming request: GET /offices/count")
-        count = await crud.get_offices_count(db)
+        count = await customer_crud.get_offices_count(db)
         logger.info(f"Response: offices count = {count}")
         return {"count": count}
     except Exception as e:
@@ -76,7 +75,7 @@ async def get_offices_count(db: Session = Depends(get_db)):
 async def get_payments_count(db: Session = Depends(get_db)):
     try:
         logger.info("Incoming request: GET /payments/count")
-        count = await crud.get_payments_count(db)
+        count = await customer_crud.get_payments_count(db)
         logger.info(f"Response: payments count = {count}")
         return {"count": count}
     except Exception as e:
@@ -88,7 +87,7 @@ async def get_payments_count(db: Session = Depends(get_db)):
 async def get_orderdetails_count(db: Session = Depends(get_db)):
     try:
         logger.info("Incoming request: GET /orderdetails/count")
-        count = await crud.get_orderdetails_count(db)
+        count = await customer_crud.get_orderdetails_count(db)
         logger.info(f"Response: orderdetails count = {count}")
         return {"count": count}
     except Exception as e:
@@ -100,7 +99,7 @@ async def get_orderdetails_count(db: Session = Depends(get_db)):
 async def get_productlines_count(db: Session = Depends(get_db)):
     try:
         logger.info("Incoming request: GET /productlines/count")
-        count = await crud.get_productlines_count(db)
+        count = await customer_crud.get_productlines_count(db)
         logger.info(f"Response: productlines count = {count}")
         return {"count": count}
     except Exception as e:
@@ -122,14 +121,14 @@ async def get_overall_counts(db: Session = Depends(get_db)):
             payments,
             orderdetails,
             productlines) = await asyncio.gather(
-            crud.get_customers_count(db),
-            crud.get_orders_count(db),
-            crud.get_products_count(db),
-            crud.get_employees_count(db),
-            crud.get_offices_count(db),
-            crud.get_payments_count(db),
-            crud.get_orderdetails_count(db),
-            crud.get_productlines_count(db),)
+            customer_crud.get_customers_count(db),
+            customer_crud.get_orders_count(db),
+            customer_crud.get_products_count(db),
+            customer_crud.get_employees_count(db),
+            customer_crud.get_offices_count(db),
+            customer_crud.get_payments_count(db),
+            customer_crud.get_orderdetails_count(db),
+            customer_crud.get_productlines_count(db),)
         elapsed = round(time.time() - start_time, 4)
         logger.info(f"asyncio.gather() completed — all 8 counts retrieved")
         logger.info(f"Total response time: {elapsed}s")

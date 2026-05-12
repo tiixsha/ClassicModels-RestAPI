@@ -1,12 +1,10 @@
 import os
-import logging
+from logger import get_logger
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 
-
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 load_dotenv()
 DATABASE_URL = os.getenv('DATABASE_URL')

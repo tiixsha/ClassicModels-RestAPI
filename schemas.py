@@ -1,7 +1,6 @@
 from pydantic import BaseModel, Field, ConfigDict, field_validator
 from typing import Optional, List
 from datetime import date
-from decimal import Decimal
 import re
 
 
@@ -23,10 +22,11 @@ class PaymentOut(BaseModel):
     customerNumber: int
     checkNumber: str = Field(..., max_length=50, description="Unique check number for the payment")
     paymentDate: date
-    amount: Decimal = Field(..., gt=0, description="Payment amount must be greater than 0")
+    amount: float = Field(..., gt=0, description="Payment amount must be greater than 0")
 
 
 class CustomerCreate(BaseModel):
+    customerNumber: int = Field(..., description="Unique customer number — must be provided manually")
     customerName: str = Field(..., min_length=1, max_length=50, description="Full name of the customer")
     contactLastName: str = Field(..., min_length=1, max_length=50, description="Last name of contact person")
     contactFirstName: str = Field(..., min_length=1, max_length=50, description="First name of contact person")
@@ -38,7 +38,7 @@ class CustomerCreate(BaseModel):
     postalCode: Optional[str] = Field(None, max_length=15, description="Postal code of the customer")
     country: str = Field(..., min_length=1, max_length=50, description="Country of the customer")
     salesRepEmployeeNumber: Optional[int] = Field(None, description="Employee number of the sales representative")
-    creditLimit: Optional[Decimal] = Field(None, ge=0, description="Credit limit must be zero or positive")
+    creditLimit: Optional[float] = Field(None, ge=0, description="Credit limit must be zero or positive")
 
     @field_validator('phone')
     @classmethod
@@ -63,7 +63,7 @@ class CustomerUpdate(BaseModel):
     postalCode: Optional[str] = Field(None, max_length=15, description="Postal code of the customer")
     country: Optional[str] = Field(None, min_length=1, max_length=50, description="Country of the customer")
     salesRepEmployeeNumber: Optional[int] = Field(None, description="Employee number of the sales representative")
-    creditLimit: Optional[Decimal] = Field(None, ge=0, description="Credit limit must be zero or positive")
+    creditLimit: Optional[float] = Field(None, ge=0, description="Credit limit must be zero or positive")
 
     @field_validator('phone')
     @classmethod
@@ -93,6 +93,6 @@ class CustomerOut(BaseModel):
     postalCode: Optional[str] = Field(None, description="Postal code of the customer")
     country: str = Field(..., description="Country of the customer")
     salesRepEmployeeNumber: Optional[int] = Field(None, description="Employee number of the sales representative")
-    creditLimit: Optional[Decimal] = Field(None, description="Credit limit of the customer")
+    creditLimit: Optional[float] = Field(None, description="Credit limit of the customer")
     orders: List[OrderOut] = Field(default=[], description="List of orders placed by the customer")
     payments: List[PaymentOut] = Field(default=[], description="List of payments made by the customer")

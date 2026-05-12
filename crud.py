@@ -1,3 +1,6 @@
+
+
+
 from sqlalchemy.orm import Session
 import models, schemas
 import logging
@@ -6,6 +9,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
+# ── Customers ──────────────────────────────────────────────
 def get_customers(db: Session, skip: int = 0, limit: int = 100):
     try:
         customers = db.query(models.Customers).offset(skip).limit(limit).all()
@@ -108,4 +112,94 @@ def get_customer_payments(db: Session, customer_number: int):
         return payments
     except Exception as e:
         logger.error(f"Failed to retrieve payments for customer {customer_number}: {e}")
+        raise
+
+
+# ── Count Functions (async for concurrency) ────────────────
+S
+async def get_customers_count(db: Session) -> int:
+    try:
+        logger.info("Starting customers count query")
+        count = db.query(models.Customers).count()
+        logger.info(f"Customers count query completed: {count}")
+        return count
+    except Exception as e:
+        logger.error(f"Failed to get customers count: {e}")
+        raise
+
+
+async def get_orders_count(db: Session) -> int:
+    try:
+        logger.info("Starting orders count query")
+        count = db.query(models.Orders).count()
+        logger.info(f"Orders count query completed: {count}")
+        return count
+    except Exception as e:
+        logger.error(f"Failed to get orders count: {e}")
+        raise
+
+
+async def get_products_count(db: Session) -> int:
+    try:
+        logger.info("Starting products count query")
+        count = db.query(models.Products).count()
+        logger.info(f"Products count query completed: {count}")
+        return count
+    except Exception as e:
+        logger.error(f"Failed to get products count: {e}")
+        raise
+
+
+async def get_employees_count(db: Session) -> int:
+    try:
+        logger.info("Starting employees count query")
+        count = db.query(models.Employees).count()
+        logger.info(f"Employees count query completed: {count}")
+        return count
+    except Exception as e:
+        logger.error(f"Failed to get employees count: {e}")
+        raise
+
+
+async def get_offices_count(db: Session) -> int:
+    try:
+        logger.info("Starting offices count query")
+        count = db.query(models.Offices).count()
+        logger.info(f"Offices count query completed: {count}")
+        return count
+    except Exception as e:
+        logger.error(f"Failed to get offices count: {e}")
+        raise
+
+
+async def get_payments_count(db: Session) -> int:
+    try:
+        logger.info("Starting payments count query")
+        count = db.query(models.Payments).count()
+        logger.info(f"Payments count query completed: {count}")
+        return count
+    except Exception as e:
+        logger.error(f"Failed to get payments count: {e}")
+        raise
+
+
+async def get_orderdetails_count(db: Session) -> int:
+    try:
+        logger.info("Starting orderdetails count query")
+        count = db.query(models.OrderDetails).count()
+        logger.info(f"OrderDetails count query completed: {count}")
+        return count
+    except Exception as e:
+        logger.error(f"Failed to get orderdetails count: {e}")
+        raise
+
+
+async def get_productlines_count(db: Session) -> int:
+    try:
+        logger.info("Starting productlines count query")
+        count = db.query(models.ProductLines).count()
+        logger.info(f"ProductLines count query completed: {count}")
+        return count
+    except Exception as e:
+        logger.error(f"Failed to get productlines count: {e}")
         raise
